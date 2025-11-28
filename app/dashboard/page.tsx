@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { SalaryDetails } from "../../types";
+import { SalaryDetails } from "../types";
 import SalarySlip from "../components/SalarySlip";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";

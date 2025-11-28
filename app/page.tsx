@@ -34,6 +34,7 @@ const initialData: SalaryDetails = {
 export default function Home() {
   const [salaryData, setSalaryData] = useState<SalaryDetails>(initialData);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const salarySlipRef = useRef<HTMLDivElement>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +113,30 @@ export default function Home() {
     }
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/salary-slips", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(salaryData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Salary slip saved successfully!");
+      } else {
+        alert("Failed to save salary slip.");
+      }
+    } catch (error) {
+      console.error("Error saving slip:", error);
+      alert("An error occurred while saving.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-black pb-10">
       {/* Header - Hidden in print */}
@@ -134,10 +159,24 @@ export default function Home() {
             </svg>
             <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
               Salary Slip Creator
-            </h1>
+          </h1>
           </div>
           
           <div className="flex gap-3">
+            <a
+              href="/dashboard"
+              className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-900 text-white px-4 py-2 rounded-lg font-medium transition-colors mr-2"
+            >
+              View Dashboard
+            </a>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              {isSaving ? "Saving..." : "Save Slip"}
+            </button>
+
             <button
               onClick={handlePrint}
               className="flex items-center gap-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-100 px-4 py-2 rounded-lg font-medium transition-colors border border-zinc-300 dark:border-zinc-700"

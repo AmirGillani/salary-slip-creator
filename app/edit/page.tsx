@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent, useRef, useEffect } from "react";
+import React, { useState, ChangeEvent, useRef, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import SalaryForm from "../components/SalaryForm";
 import SalarySlip from "../components/SalarySlip";
@@ -32,7 +32,7 @@ const initialData: SalaryDetails = {
   otherDeductions: 0,
 };
 
-export default function EditPage() {
+function EditPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const slipId = searchParams.get("id");
@@ -299,3 +299,14 @@ export default function EditPage() {
   );
 }
 
+export default function EditPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-zinc-100 dark:bg-black flex items-center justify-center">
+        <p className="text-zinc-500">Loading...</p>
+      </div>
+    }>
+      <EditPageContent />
+    </Suspense>
+  );
+}
